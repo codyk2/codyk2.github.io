@@ -237,9 +237,11 @@ section { position: relative; padding: 12vh 0; }
 .about-portrait .frame img {
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover; object-position: center top;
+  transform: scale(1.6);
+  transform-origin: center 22%;
   transition: transform .9s var(--ease);
 }
-.about-portrait:hover .frame img { transform: scale(1.04); }
+.about-portrait:hover .frame img { transform: scale(1.66); }
 .about .copy {
   font-family: var(--font-serif);
   font-size: clamp(28px, 3.6vw, 56px);
@@ -375,6 +377,79 @@ section { position: relative; padding: 12vh 0; }
 .foot .col .label { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 6px; }
 .foot .bottom { margin-top: 5vh; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.18); display: flex; justify-content: space-between; font-size: 12px; color: rgba(255,255,255,.55); }
 
+/* ---------- Resume overlay ---------- */
+.resume-overlay {
+  position: fixed;
+  top: 0; left: 100%;            /* off-screen right via positioning, not transform */
+  width: 100vw; height: 100vh;
+  z-index: 80;
+  background: var(--bg);
+  display: grid; place-items: center;
+  pointer-events: none;
+}
+.resume-overlay.is-open { pointer-events: auto; }
+.resume-stage {
+  perspective: 1400px;
+  padding: 80px 28px 40px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.resume-float {
+  animation: resumeFloat 6s ease-in-out infinite;
+}
+@keyframes resumeFloat {
+  0%, 100% { transform: translateY(-6px); }
+  50%      { transform: translateY(8px); }
+}
+.resume-card {
+  display: block;
+  width: clamp(280px, 48vw, 540px);
+  aspect-ratio: 8.5 / 11;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 40px 80px -20px rgba(19,19,19,0.35), 0 18px 30px -12px rgba(19,19,19,0.18);
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: box-shadow .35s var(--ease);
+  will-change: transform;
+}
+.resume-card img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center top;
+  pointer-events: none; user-select: none;
+}
+.resume-card:hover {
+  box-shadow: 0 60px 110px -20px rgba(19,19,19,0.5), 0 30px 50px -16px rgba(19,19,19,0.25);
+}
+.resume-hint {
+  margin: 28px 0 0;
+  font-size: 11px; letter-spacing: .25em; text-transform: uppercase;
+  color: var(--muted); text-align: center;
+  opacity: 0; transition: opacity .6s var(--ease) .4s;
+}
+.resume-overlay.is-open .resume-hint { opacity: 1; }
+.resume-close {
+  position: fixed; top: 18px; right: 28px; z-index: 90;
+  width: 44px; height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg); color: var(--ink);
+  display: grid; place-items: center;
+  cursor: pointer;
+  opacity: 0; transform: scale(0.85);
+  transition: opacity .4s var(--ease), transform .4s var(--ease), background-color .2s var(--ease), color .2s var(--ease);
+}
+.resume-overlay.is-open .resume-close { opacity: 1; transform: scale(1); }
+.resume-close:hover { background: var(--ink); color: var(--bg); }
+.resume-close svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 1.6; fill: none; stroke-linecap: round; }
+@media (max-width: 700px) {
+  .resume-card { width: min(86vw, 520px); }
+  .resume-stage { padding: 80px 16px 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .resume-float { animation: none; }
+}
+
 /* reveal helpers */
 .fade-up { opacity: 0; transform: translateY(40px); }
 .parallax-img { will-change: transform; }
@@ -399,7 +474,7 @@ section { position: relative; padding: 12vh 0; }
     <!-- Position-only placeholder; the visible "About" word slides into this slot. -->
     <span class="link-about-slot" aria-hidden="true">About</span>
     <a href="#work" class="link-work" data-hover>Work</a>
-    <a href="resume.pdf" class="link-resume" target="_blank" rel="noopener" data-hover>Resume</a>
+    <a href="resume.pdf" class="link-resume" data-hover data-resume-toggle>Resume</a>
   </nav>
 </header>
 
@@ -448,39 +523,39 @@ section { position: relative; padding: 12vh 0; }
       <div class="label fade-up">2024 — 2026</div>
     </div>
 
-    <a class="project" data-hover href="#">
+    <a class="project" data-hover href="https://github.com/codyk2/Dev" target="_blank" rel="noopener">
       <div class="info">
-        <div class="num fade-up">01 / Brand identity</div>
-        <h3 data-split>Northwind&nbsp;Studio</h3>
-        <p class="fade-up">Identity and site for a small architecture studio. Custom serif, slow color, and a publication-quality grid.</p>
-        <div class="tags fade-up"><span class="tag">Brand</span><span class="tag">Website</span><span class="tag">2026</span></div>
-      </div>
-      <div class="visual">
-        <div class="img parallax-img" style="background-image: linear-gradient(135deg,#c9bfa8,#7a6f55);"></div>
-      </div>
-    </a>
-
-    <a class="project" data-hover href="#">
-      <div class="info">
-        <div class="num fade-up">02 / Product</div>
-        <h3 data-split>Halcyon&nbsp;App</h3>
-        <p class="fade-up">A focus tool that nudges instead of nags. Designed end-to-end and shipped to iOS &amp; Web.</p>
-        <div class="tags fade-up"><span class="tag">Product</span><span class="tag">iOS</span><span class="tag">2025</span></div>
-      </div>
-      <div class="visual">
-        <div class="img parallax-img" style="background-image: linear-gradient(135deg,#2b2a26,#6f6a5d);"></div>
-      </div>
-    </a>
-
-    <a class="project" data-hover href="#">
-      <div class="info">
-        <div class="num fade-up">03 / Editorial</div>
-        <h3 data-split>Mercato&nbsp;Issue 04</h3>
-        <p class="fade-up">Web companion to a print zine — long-form layouts, audio essays, and a pretty index.</p>
-        <div class="tags fade-up"><span class="tag">Editorial</span><span class="tag">Web</span><span class="tag">2024</span></div>
+        <div class="num fade-up">01 / Platform</div>
+        <h3 data-split>Entry</h3>
+        <p class="fade-up">Co-founded a four-service production platform — Express API, Next.js frontend, FastAPI AI service, and a Claude Desktop MCP. Hybrid semantic search over 80M+ professional contacts using pgvector and a resilient LLM query parser.</p>
+        <div class="tags fade-up"><span class="tag">Product</span><span class="tag">AI</span><span class="tag">2026</span></div>
       </div>
       <div class="visual">
         <div class="img parallax-img" style="background-image: linear-gradient(135deg,#ff5a1f,#b13502);"></div>
+      </div>
+    </a>
+
+    <a class="project" data-hover href="https://github.com/codyk2/Zo" target="_blank" rel="noopener">
+      <div class="info">
+        <div class="num fade-up">02 / On-device AI</div>
+        <h3 data-split>Zo</h3>
+        <p class="fade-up">A 24/7 multilingual livestream shopping agent built on Gemma E4B via the Cactus runtime. A three-tier pre-rendered MP4 architecture keeps ~90% of responses fully on-device, dropping per-seller cost from $9,628 to $144 a month.</p>
+        <div class="tags fade-up"><span class="tag">AI</span><span class="tag">iOS</span><span class="tag">2026</span></div>
+      </div>
+      <div class="visual">
+        <div class="img parallax-img" style="background-image: url('images/zo-hackathon.jpg');"></div>
+      </div>
+    </a>
+
+    <a class="project" data-hover href="https://github.com/codyk2/spacex-news" target="_blank" rel="noopener">
+      <div class="info">
+        <div class="num fade-up">03 / Editorial</div>
+        <h3 data-split>SpaceX Daily Digest</h3>
+        <p class="fade-up">An automated daily briefing scraping 7+ space news sources and curated X accounts, synthesizing through the Claude API, and publishing static HTML via GitHub Actions. Parallel fetching, dedup, and resilient RSS/Nitter fallbacks.</p>
+        <div class="tags fade-up"><span class="tag">Tooling</span><span class="tag">Web</span><span class="tag">2026</span></div>
+      </div>
+      <div class="visual">
+        <div class="img parallax-img" style="background-image: url('images/spacex-news.jpg');"></div>
       </div>
     </a>
   </div>
@@ -496,9 +571,9 @@ section { position: relative; padding: 12vh 0; }
     <div class="endurance-grid">
       <div class="photo-card">
         <div class="photo-container">
-          <img src="images/bearathon-2.jpg" alt="Bearathon '24 — Waco, TX" loading="lazy" />
+          <img src="images/bearathon-2.jpg" alt="Bearathon '25 — Waco, TX" loading="lazy" />
         </div>
-        <p class="photo-caption">Bearathon &rsquo;24 — Waco, TX</p>
+        <p class="photo-caption">Bearathon &rsquo;25 — Waco, TX</p>
       </div>
       <div class="photo-card">
         <div class="photo-container">
@@ -508,9 +583,9 @@ section { position: relative; padding: 12vh 0; }
       </div>
       <div class="photo-card">
         <div class="photo-container">
-          <img src="images/bearathon-1.jpg" alt="Bearathon '25 — McLane Stadium" loading="lazy" />
+          <img src="images/bearathon-1.jpg" alt="Bearathon '26 — McLane Stadium" loading="lazy" />
         </div>
-        <p class="photo-caption">Bearathon &rsquo;25 — McLane Stadium</p>
+        <p class="photo-caption">Bearathon &rsquo;26 — McLane Stadium</p>
       </div>
     </div>
   </div>
@@ -542,6 +617,21 @@ section { position: relative; padding: 12vh 0; }
     </div>
   </div>
 </footer>
+
+<!-- Resume overlay -->
+<div class="resume-overlay" id="resumeOverlay" aria-hidden="true">
+  <button class="resume-close" id="resumeClose" aria-label="Close resume">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 L18 18 M18 6 L6 18"/></svg>
+  </button>
+  <div class="resume-stage" id="resumeStage">
+    <div class="resume-float">
+      <a class="resume-card" id="resumeCard" href="resume.pdf" download="Cody-Kandarian-Resume.pdf" aria-label="Download resume PDF">
+        <img src="images/resume-preview.png" alt="Cody Kandarian resume" loading="lazy" />
+      </a>
+    </div>
+    <p class="resume-hint">Click to download · PDF</p>
+  </div>
+</div>
 
 <!-- Libs -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -742,6 +832,72 @@ function startSite(){
       scrollTrigger: { trigger: img.parentElement, start: 'top bottom', end: 'bottom top', scrub: true }
     });
   });
+
+  /* ---------------- Resume overlay ---------------- */
+  (function setupResume(){
+    const overlay = document.getElementById('resumeOverlay');
+    const trigger = document.querySelector('[data-resume-toggle]');
+    const closeBtn = document.getElementById('resumeClose');
+    const card = document.getElementById('resumeCard');
+    const stage = document.getElementById('resumeStage');
+    const mainEl = document.querySelector('main');
+    const footEl = document.querySelector('footer.foot');
+    if (!overlay || !trigger) return;
+
+    const dur = 1.0;
+    const ease = 'power3.inOut';
+    let isOpen = false;
+
+    // Overlay is positioned at left:100% via CSS — translateX(-100%) brings it on-screen.
+    function openResume(e) {
+      if (e) e.preventDefault();
+      if (isOpen) return;
+      isOpen = true;
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      gsap.to([mainEl, footEl], { xPercent: -100, duration: dur, ease });
+      gsap.to(overlay,           { xPercent: -100, duration: dur, ease });
+    }
+
+    function closeResume() {
+      if (!isOpen) return;
+      isOpen = false;
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      gsap.to([mainEl, footEl], { xPercent: 0, duration: dur, ease });
+      gsap.to(overlay,           { xPercent: 0, duration: dur, ease });
+      // Reset card tilt so next open is fresh
+      gsap.to(card, { rotationX: 0, rotationY: 0, x: 0, y: 0, duration: 0.5, ease: 'power3.out' });
+    }
+
+    trigger.addEventListener('click', openResume);
+    closeBtn.addEventListener('click', closeResume);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) closeResume();
+    });
+
+    // 3D mouse tilt — quickTo for smooth per-frame updates
+    const rotY = gsap.quickTo(card, 'rotationY', { duration: 0.5, ease: 'power3.out' });
+    const rotX = gsap.quickTo(card, 'rotationX', { duration: 0.5, ease: 'power3.out' });
+    const tx   = gsap.quickTo(card, 'x',         { duration: 0.5, ease: 'power3.out' });
+    const ty   = gsap.quickTo(card, 'y',         { duration: 0.5, ease: 'power3.out' });
+
+    stage.addEventListener('mousemove', (e) => {
+      if (!isOpen) return;
+      const r = card.getBoundingClientRect();
+      const nx = (e.clientX - (r.left + r.width / 2))  / (r.width / 2);   // -1 .. 1
+      const ny = (e.clientY - (r.top  + r.height / 2)) / (r.height / 2);
+      rotY(nx * 14);
+      rotX(-ny * 14);
+      tx(nx * 8);
+      ty(ny * 8);
+    });
+    stage.addEventListener('mouseleave', () => {
+      rotY(0); rotX(0); tx(0); ty(0);
+    });
+  })();
 
   // Refresh once layout settled
   ScrollTrigger.refresh();
